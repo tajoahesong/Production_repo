@@ -1,0 +1,91 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "",
+        "Metadata": {
+    
+        },
+        "Parameters": {
+        
+        },
+        "Mappings": {
+    
+        },
+        "Conditions": {
+    
+        },
+        "Resources": {
+        "mygitvpc": {
+          "Type": "AWS::EC2::VPC",
+          "Properties": {
+            "CidrBlock": "176.10.0.0/24",
+            "Tags": [
+              { "Key": "Name", "Value":  "mygitvpc" }]
+          }
+        },
+        
+        "mygitvpcIGW": {
+          "Type": "AWS::EC2::InternetGateway",
+          "Properties": {  
+            "Tags":[{ "Key": "Name", "Value":  "mygitvpcIGW" }]
+          }
+        },
+        "AttachGateway": {
+          "Type": "AWS::EC2::VPCGatewayAttachment",
+          "Properties": {
+            "VpcId": { "Ref": "mygitvpc" },
+            "InternetGatewayId": { "Ref": "mygitvpcIGW" }
+          }
+        },
+        
+        "mygitvpcPubRTB": {
+          "Type": "AWS::EC2::RouteTable",
+          "Properties": {
+            "VpcId": { "Ref": "mygitvpc" },
+           "Tags":[{ "Key": "Name", "Value":  "mygitvpcRTB" }]
+          }
+        }, 
+        
+        "mygitvpcPubrt": {
+          "Type": "AWS::EC2::Route",
+          "Properties": {
+            "RouteTableId":{ "Ref": "mygitvpcPubRTB" },
+            "DestinationCidrBlock": "0.0.0.0/0",
+            "GatewayId":{ "Ref": "mygitvpcIGW" }
+             }
+        },
+      
+      "Pubrouteassoc": {
+        "Type": "AWS::EC2::SubnetRouteTableAssociation",
+        "Properties": {
+          "SubnetId":{ "Ref": "mygitvpcPubsub" },
+          "RouteTableId":{ "Ref": "mygitvpcPubRTB" }
+          
+        }
+      },
+      
+      
+        "mygitvpcPubsub": {
+          "Type": "AWS::EC2::Subnet",
+          "Properties": {
+            "AvailabilityZone": "us-east-1a",
+            "VpcId":{ "Ref": "mygitvpc" },
+            "CidrBlock":"176.10.0.0/25",
+             "Tags":[{ "Key": "Name", "Value":  "mygitvpcPubsub" }]
+          }
+        },
+        "mygitvpcPrisub": {
+          "Type": "AWS::EC2::Subnet",
+          "Properties": {
+            "AvailabilityZone": "us-east-1a",
+            "VpcId":{ "Ref": "mygitvpc" },
+            "CidrBlock": "176.10.0.128/25",
+             "Tags":[{ "Key": "Name", "Value":  "mygitvpcPrisub" }]
+          }
+        }
+      },
+        
+        "Outputs": {
+    
+        }
+    }
+    
